@@ -67,12 +67,12 @@ Vaatimusmäärittelyn pohjalta kehitimme melko nopeastikin alla olevan ER-kaavio
 muutamien tietokenttien lisäys. Huomasimme myös, että moni-moneen suhde “member” ja “playertype” välissä on turha. Ajattelimme aluksi, että sitä tarvitsisi siinä tilanteessa, että jäsen on Dungeon Master  
 ja pelaaja, mutta sen sijasta playertype tauluun voi laittaa suoraan neljä mahdollista tilaa (epäaktiivinen, pelaaja, dungeon master ja kumpikin). Kummastakin iteraatiosta on kuva alhaalla:  
  
-Iteraatio 1 (fig 1) 
-![Figure 1](./pics/fig1.png)
+Iteraatio 1 (fig 1)  
+![Figure 1](./pics/fig1.png)  
  
 Iteraatio 2 (fig 2)  
-![Figure 2](./pics/fig2.png)
-
+![Figure 2](./pics/fig2.png)  
+ 
 Tietokannassa on kaikki toiminnot, jotka listattiin vaatimusmäärittelyssä ja vähän lisääkin. 
 Member- tauluun kirjataan kaikki kerhossa olevat jäsenet. Heidän “tila” saadaan playertype –taulusta. Yhdellä jäsenellä voi olla useampi pelihahmo (character), mutta ei ole pakko olla (ja hahmolla on pakko olla jäsen).  
 Pelihahmo saa rodun race –taulusta. Dungeons and Dragons:ssa on mahdollista pelata useampaa classia yhdellä pelihahmolla, joten hahmon ja class taulun väliin tulee moni-moneen yhteys (yksi classi voi olla useammalla hahmolla).  
@@ -84,8 +84,8 @@ Campaign tauluun kirjataan kaikkien kamppanjoiden oleellisimmat tiedot. Nimi (es
 tila (aktiivinen, lopetettu, keskeytetty (saadaan state taulusta)), ja aloitus- sekä lopetuspäivät. Participant taulussa on listattu ne hahmot, jotka kuuluvat kamppanjaan.  
 Taulussa on vain ID:tä, mutta sen avulla SQL loitsujen kautta saa näkymään jokaisen kamppanjan jokaisen hahmon seuraavasti:  
 
-(fig 3)
-![Figure 3](./pics/fig3.png)
+(fig 3)  
+![Figure 3](./pics/fig3.png)  
   
 Tässä koodi näkymän luontiin:  
 ```
@@ -110,9 +110,9 @@ ORDER BY c.campaignID, ch.characterName, chc.classID;
 ```
 Tehtiin vielä näkymä, josta saa helposti selville jokaisen jäsenen jokaisen hahmon erikseen. Näkymä alla:  
  
-(fig 4) 
-![Figure 4](./pics/fig4.png) 
-Tässä koodi näkymän luontiin: 
+(fig 4)  
+![Figure 4](./pics/fig4.png)  
+Tässä koodi näkymän luontiin:  
 ```
 CREATE VIEW allCharacters AS 
 
@@ -130,8 +130,8 @@ Sessiotauluun (session) kirjataan päiväys, jolloin on pidetty pelikerta. Sessi
 sekä luonnollisesti taulun oma ID. Session ja session_has_participant taulujen tarkoituksena on toimia tapana kirjata milloin sessio on pidetty, ketkä siihen osallistui,  
 mitä kamppanjaa pelattiin ja millä hahmoilla (saadaan participant taulusta). Tehtiin tuosta seuraava näkymä:  
  
-(fig 5) 
-![Figure 5](./pics/fig5.png) 
+(fig 5)  
+![Figure 5](./pics/fig5.png)  
 
 Tässä koodi näkymän luontiin:  
 ```
@@ -148,8 +148,8 @@ GROUP BY `date`, characterName
 ```
 Ja viimeiseksi tehtiin näkymä, josta näkyy kaikki kerhon jäsenet ja heidän “tila”.  
  
-(fig 6) 
-![Figure 6](./pics/fig6.png) 
+(fig 6)  
+![Figure 6](./pics/fig6.png)  
  
 Tässä koodi näkymän luontiin:  
 ```
@@ -204,7 +204,7 @@ END $$
 
 DELIMITER ; 
 ```
-Herättimen demonstraatio (fig 8) 
+Herättimen demonstraatio (fig 8)  
 ![Figure 7a](./pics/fig7a.png)
 ![Figure 7b](./pics/fig7b.png)
 ![Figure 7c](./pics/fig7c.png)
