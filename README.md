@@ -8,9 +8,6 @@ Jäsenet: Joni Oranne AC9766, Joonas Peltomäki AE6377
 Opintojaksotunnus: TTC2020-3037, Tietokannat 
 Versionumero: 1.0 
 Päiväys: 27.03.2024 
-Esitys pidetty Teams-kokouksessa 9.4.2024 
-
- 
 
 ## Johdanto: 
 
@@ -21,7 +18,26 @@ Täytyy olla mahdollista kirjata session päivämäärä, paikalla olevat pelaaj
 pelaajan hahmo vaihtuu, jne. Voidaan päivittää kerhon johtajien ja Dungeon Mastereiden laiskuudesta riippuen aina kun jotain tapahtuu, tai esimerkiksi kerran viikossa. Päivityksiä tulee todennäköisesti 1-20 per viikko. 
   
 Tavoitteena käytännössä on, että voidaan pitää kirjaa kaikista keskeisistä asioista kerhon sisällä. 
+
+## Työnjako
+Tietokannan rakenne (ER-kaavio) tehtiin yhdessä. Sen työtaakka jakaantuu puoliksi. Projektia työstettiin yhdessä, ja siihen meni noin 12 h.  
+Keskeinen onnistuminen on se, että tietokannan rakenne saatiin melkein ensimmäisellä kerralla muistuttamaan lopputulosta, ja  
+lisäksi forward engineering meni heti ensimmäisellä kerralla läpi. Toinen onnistuminen on se, että tietojen syötöt meni ensimmäisellä kerralla  
+aina läpi. Kaikkiaan työskentely meni yllättävän sujuvasti ja tietokannan rakenne on melko optimaali. Hahmon tuhoamistriggeri pähkäiltiin yhdessä (fig 8).  
   
+Huonona puolena se, että lähdekoodi on kommentoimatta. Toisaalta se on tehty forward engineerilla, ja SQL kielet on muutenkin melko helppolukuista.  
+
+Joni 
+Rooli: Tietokannan rakenteen hiomisen lisäksi keksin ratkaisun sille, miten hahmolla voi olla useampi classi.  
+Täytin playertype, participant, character, character_has_class, race, class ja state -taulut.  
+Kirjoitin loitsun campaignInfo (fig 3) näkymälle. Kirjoitin dokumentaatioon vaatimusmäärittelyn,  
+selostuksen tietokannan toiminnan periaatteista, ratkaisujen perusteluista sekä kuvaukset näkymistä.   
+  
+Joonas  
+Rooli: Suunnittelin tietokannan keskeisen campaign-participant-character-member-campaign loopin jonka kautta campaigneista saadaan samaan aikaan  
+näkyviin niin dungeon master kuin kaikki pelaajat. Tauluista täytin member, campaign, session (58 riviä) ja session_has_participant (260 riviä).  
+Tämän lisäksi tein seuraavat näkymät: members (fig 7), allCharacters (fig 4) ja sessions (fig 6).  
+
 ## Yleiskuvaus: 
 
 Palvelun pyörittämiseen käytetään LabraNetin MariaDB -palvelinta. Käytetään MySQL Workbenchia luomaan tietokanta ja manipuloimaan sen sisältöä. 
@@ -51,14 +67,12 @@ Suorituskyky: Vasteajalla ei niin paljoa väliä, tietokantaa päivitetään eni
 Vaatimusmäärittelyn pohjalta kehitimme melko nopeastikin alla olevan ER-kaavion. Suuria muutoksia ei joutunut tekemään, muuta kuin muutamien auto incrementtien lisäys ja kirjoitusvirheiden korjausta sekä  
 muutamien tietokenttien lisäys. Huomasimme myös, että moni-moneen suhde “member” ja “playertype” välissä on turha. Ajattelimme aluksi, että sitä tarvitsisi siinä tilanteessa, että jäsen on Dungeon Master  
 ja pelaaja, mutta sen sijasta playertype tauluun voi laittaa suoraan neljä mahdollista tilaa (epäaktiivinen, pelaaja, dungeon master ja kumpikin). Kummastakin iteraatiosta on kuva alhaalla:  
-
-KUVA TÄHÄN  
-
+ 
 Iteraatio 1 (fig 1) 
-
-KUVA TÄHÄN  
+![Figure 1](./pics/fig1)
 
 Iteraatio 2 (fig 2)  
+![Figure 2](./pics/fig1)
 
 Tietokannassa on kaikki toiminnot, jotka listattiin vaatimusmäärittelyssä ja vähän lisääkin. 
 Member- tauluun kirjataan kaikki kerhossa olevat jäsenet. Heidän “tila” saadaan playertype –taulusta. Yhdellä jäsenellä voi olla useampi pelihahmo (character), mutta ei ole pakko olla (ja hahmolla on pakko olla jäsen).  
@@ -71,9 +85,8 @@ Campaign tauluun kirjataan kaikkien kamppanjoiden oleellisimmat tiedot. Nimi (es
 tila (aktiivinen, lopetettu, keskeytetty (saadaan state taulusta)), ja aloitus- sekä lopetuspäivät. Participant taulussa on listattu ne hahmot, jotka kuuluvat kamppanjaan.  
 Taulussa on vain ID:tä, mutta sen avulla SQL loitsujen kautta saa näkymään jokaisen kamppanjan jokaisen hahmon seuraavasti:  
 
-(KUVA TÄHÄN)  
-
-(fig 3) 
+(fig 3)
+![Figure 3](./pics/fig3)
   
 Tässä koodi näkymän luontiin:  
 ```
@@ -97,10 +110,8 @@ INNER JOIN `member` m
 ORDER BY c.campaignID, ch.characterName, chc.classID; 
 ```
 Tehtiin vielä näkymä, josta saa helposti selville jokaisen jäsenen jokaisen hahmon erikseen. Näkymä alla:
-
-KUVA TÄHÄN  
-
 (fig 4) 
+![Figure 4](./pics/fig4)
 
 Tässä koodi näkymän luontiin: 
 ```
@@ -116,20 +127,12 @@ INNER JOIN `member` m ON c.memberID = m.memberID
 
 GROUP BY player, characterName, class; 
 ````
- 
-
- 
-
- 
-
- 
-
 Sessiotauluun (session) kirjataan päiväys, jolloin on pidetty pelikerta. Session_has_participant taulussa on participantID (participant taulusta) ja sessionID,  
 sekä luonnollisesti taulun oma ID. Session ja session_has_participant taulujen tarkoituksena on toimia tapana kirjata milloin sessio on pidetty, ketkä siihen osallistui,  
 mitä kamppanjaa pelattiin ja millä hahmoilla (saadaan participant taulusta). Tehtiin tuosta seuraava näkymä:  
 
-KUVA TÄHÄN  
-(fig 6) 
+(fig 5)
+![Figure 5](./pics/fig5)
 
 Tässä koodi näkymän luontiin:  
 ```
@@ -146,9 +149,8 @@ GROUP BY `date`, characterName
 ```
 Ja viimeiseksi tehtiin näkymä, josta näkyy kaikki kerhon jäsenet ja heidän “tila”.  
 
-KUVA TÄHÄN
-
-(fig 7) 
+(fig 6) 
+![Figure 6](./pics/fig6)
 
 Tässä koodi näkymän luontiin:  
 ```
@@ -203,28 +205,14 @@ END $$
 
 DELIMITER ; 
 ```
-
-KUVA TÄHÄN
 Herättimen demonstraatio (fig 8) 
+![Figure 7a](./pics/fig7a)
+![Figure 7b](./pics/fig7b)
+![Figure 7c](./pics/fig7c)
+![Figure 7d](./pics/fig7d)
+![Figure 7e](./pics/fig7e)
+![Figure 7f](./pics/fig7f)
+![Figure 7g](./pics/fig7g)
+![Figure 7h](./pics/fig7h)
+![Figure 7i](./pics/fig7i)
 Hahmo on onnistuneesti pyyhitty kannasta. 
-
-## Työnjako
-Tietokannan rakenne (ER-kaavio) tehtiin yhdessä. Sen työtaakka jakaantuu puoliksi. Projektia työstettiin yhdessä, ja siihen meni noin 12 h.  
-Keskeinen onnistuminen on se, että tietokannan rakenne saatiin melkein ensimmäisellä kerralla muistuttamaan lopputulosta, ja  
-lisäksi forward engineering meni heti ensimmäisellä kerralla läpi. Toinen onnistuminen on se, että tietojen syötöt meni ensimmäisellä kerralla  
-aina läpi. Kaikkiaan työskentely meni yllättävän sujuvasti ja tietokannan rakenne on melko optimaali. Hahmon tuhoamistriggeri pähkäiltiin yhdessä (fig 8).  
-  
-Huonona puolena se, että lähdekoodi on kommentoimatta. Toisaalta se on tehty forward engineerilla, ja SQL kielet on muutenkin melko helppolukuista.  
-
- 
-
-Joni 
-Rooli: Tietokannan rakenteen hiomisen lisäksi keksin ratkaisun sille, miten hahmolla voi olla useampi classi.  
-Täytin playertype, participant, character, character_has_class, race, class ja state -taulut.  
-Kirjoitin loitsun campaignInfo (fig 3) näkymälle. Kirjoitin dokumentaatioon vaatimusmäärittelyn,  
-selostuksen tietokannan toiminnan periaatteista, ratkaisujen perusteluista sekä kuvaukset näkymistä.   
-  
-Joonas  
-Rooli: Suunnittelin tietokannan keskeisen campaign-participant-character-member-campaign loopin jonka kautta campaigneista saadaan samaan aikaan  
-näkyviin niin dungeon master kuin kaikki pelaajat. Tauluista täytin member, campaign, session (58 riviä) ja session_has_participant (260 riviä).  
-Tämän lisäksi tein seuraavat näkymät: members (fig 7), allCharacters (fig 4) ja sessions (fig 6).  
