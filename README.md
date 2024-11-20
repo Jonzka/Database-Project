@@ -1,93 +1,113 @@
 # Database-Project
-A MySQL database project done for a school course.
+A MySQL database project done for a school course. No actual club is involved, it's just something fun we thought of for the course's final project.  
 
-# Luolat ja lohikäärmeet -kerholle tietokanta 
+# Database for a Dungeons and Dragons Club  
 
-Työryhmän nimi: Luolainsinöörit 
-Jäsenet: Joni Oranne, Joonas Peltomäki
-Versionumero: 1.0 
-Päiväys: 27.03.2024 
+Team Name: Dungeon Engineers  
+Members: Joni Oranne, Joonas Peltomäki  
+Version Number: 1.0  
+Date: 27.03.2024  
 
-## Johdanto: 
+## Introduction  
 
-Teemme Adventurer’s League -tyylisen D&D kerhon tietokannan, johon tallennetaan D&D kerhon historiaa: menneet pelisessiot, pelaajien hahmot, jäsenet, menneet ja nykyiset kamppanjat ja niiden Dungeon Masterit ja pelaajat.  
-Halutaan tallentaa pelihahmon kaikki keskeiset tiedot eli race, class, taso, nimi, subclass. Tietokantaa käyttää kerhon johtajat ja Dungeon Masterit. Käyttöliittymä on mahdollisesti graafinen. 
+We are creating a database for a D&D club, similar to the Adventurer’s League, to store the club's history: past game sessions, player characters, members, past and current campaigns, and their Dungeon Masters and players.  
+The goal is to store all essential character information, such as race, class, level, name, and subclass. The database will be used by the club's leaders and Dungeon Masters.  
 
-Täytyy olla mahdollista kirjata session päivämäärä, paikalla olevat pelaajat, DM ja mitä kamppanjaa pelattiin. Päivitetään henkilöiden poistuessa tai liittyessä kerhoon, kun pelaaja liittyy kamppanjaan,  
-pelaajan hahmo vaihtuu, jne. Voidaan päivittää kerhon johtajien ja Dungeon Mastereiden laiskuudesta riippuen aina kun jotain tapahtuu, tai esimerkiksi kerran viikossa. Päivityksiä tulee todennäköisesti 1-20 per viikko. 
-  
-Tavoitteena käytännössä on, että voidaan pitää kirjaa kaikista keskeisistä asioista kerhon sisällä. 
+It must be possible to log session dates, attending players, the DM, and the campaign being played. Updates occur when members leave or join the club, players join campaigns, characters change, etc.  
+Updates can be done as frequently as events happen or, for example, once a week, depending on the diligence of the club leaders and Dungeon Masters. There will likely be 1-20 updates per week.  
 
-## Työnjako
-Tietokannan rakenne (ER-kaavio) tehtiin yhdessä. Sen työtaakka jakaantuu puoliksi. Projektia työstettiin yhdessä, ja siihen meni noin 12 h.  
-Keskeinen onnistuminen on se, että tietokannan rakenne saatiin melkein ensimmäisellä kerralla muistuttamaan lopputulosta, ja  
-lisäksi forward engineering meni heti ensimmäisellä kerralla läpi. Toinen onnistuminen on se, että tietojen syötöt meni ensimmäisellä kerralla  
-aina läpi. Kaikkiaan työskentely meni yllättävän sujuvasti ja tietokannan rakenne on melko optimaali. Hahmon tuhoamistriggeri pähkäiltiin yhdessä (fig 8).  
-  
-Huonona puolena se, että lähdekoodi on kommentoimatta. Toisaalta se on tehty forward engineerilla, ja SQL kielet on muutenkin melko helppolukuista.  
+The practical goal is to keep track of all essential club activities.  
 
-Joni 
-Rooli: Tietokannan rakenteen hiomisen lisäksi keksin ratkaisun sille, miten hahmolla voi olla useampi classi.  
-Täytin playertype, participant, character, character_has_class, race, class ja state -taulut.  
-Kirjoitin loitsun campaignInfo (fig 3) näkymälle. Kirjoitin dokumentaatioon vaatimusmäärittelyn,  
-selostuksen tietokannan toiminnan periaatteista, ratkaisujen perusteluista sekä kuvaukset näkymistä.   
-  
-Joonas  
-Rooli: Suunnittelin tietokannan keskeisen campaign-participant-character-member-campaign loopin jonka kautta campaigneista saadaan samaan aikaan  
-näkyviin niin dungeon master kuin kaikki pelaajat. Tauluista täytin member, campaign, session (58 riviä) ja session_has_participant (260 riviä).  
-Tämän lisäksi tein seuraavat näkymät: members (fig 7), allCharacters (fig 4) ja sessions (fig 6).  
+## Division of Work  
 
-## Yleiskuvaus: 
+The database structure (ER diagram) was created together, with the workload split equally. The project was worked on collaboratively for about 12 hours.  
+A major success was that the database structure almost perfectly resembled the final result on the first attempt, and forward engineering worked successfully on the first try.  
+Another success was that data entry succeeded on the first attempt every time. Overall, the workflow went surprisingly smoothly, and the database structure is quite optimal.  
+The character deletion trigger was collaboratively developed (fig 8).  
 
-Palvelun pyörittämiseen käytetään LabraNetin MariaDB -palvelinta. Käytetään MySQL Workbenchia luomaan tietokanta ja manipuloimaan sen sisältöä. 
+On the downside, the source code is not commented. However, it was created using forward engineering, and SQL languages are generally quite readable.  
 
-Toiminnot 
+**Joni**  
+Role: In addition to refining the database structure, I devised the solution for allowing characters to have multiple classes.  
+I populated the playertype, participant, character, character_has_class, race, class, and state tables.  
+I wrote the campaignInfo spell (fig 3) for the view. I wrote the documentation for the requirements specification,  
+explained the principles of database operation, justified design decisions, and described the views.  
 
-Pakolliset: 
+**Joonas**  
+Role: I designed the core campaign-participant-character-member-campaign loop that enables displaying both the Dungeon Master  
+and all players of a campaign simultaneously. I populated the member, campaign, session (58 rows), and session_has_participant (260 rows) tables.  
+Additionally, I created the following views: members (fig 7), allCharacters (fig 4), and sessions (fig 6).  
 
-* Kerhon jäsenet (nimi, ikä, puh. numero, s.posti) 
+## Overview  
 
-* Henkilöiden pelihahmot ja niiden keskeiset tiedot 
+MySQL Workbench is used to create the database and manipulate its contents.  
 
-* Onko henkilö pelaaja, dungeon master, kumpikin vai epäaktiivinen 
+**Features**  
 
-* Pelisessioiden kirjaus 
+Mandatory:  
 
-* Kamppanjan tiedot (nimi, kamppanjan Dungeon Master ja pelaajat) 
+* Club members (name, age, phone number, email)  
+* Player characters and their key details  
+* Whether the individual is a player, Dungeon Master, both, or inactive  
+* Logging game sessions  
+* Campaign details (name, campaign Dungeon Master, and players)  
 
-  
+## Additional Features  
 
-## Muut ominaisuudet 
+Performance: Response time is not critical as the database is updated at most a few times a week. The data size will never grow large enough to require indexing.  
 
-Suorituskyky: Vasteajalla ei niin paljoa väliä, tietokantaa päivitetään enintään muutaman kerran viikossa. Tietokannan sisältämä data ei  koskaan kasva niin suureksi, että indeksointi olisi tarpeellista. 
+## Database Implementation, Functionality, and Principles  
 
-## Tietokannan toteutus, toimivuus ja periaatteet 
+Based on the requirements specification, we quickly developed the ER diagram below. Only minor changes were needed, such as adding a few auto increments, correcting typos, and adding some data fields.  
+We also discovered that a many-to-many relationship between “member” and “playertype” was unnecessary. Initially, we thought it would be needed if a member were both a Dungeon Master and a player,  
+but instead, we added four possible states directly to the playertype table (inactive, player, Dungeon Master, and both). Both iterations are shown below:  
 
-Vaatimusmäärittelyn pohjalta kehitimme melko nopeastikin alla olevan ER-kaavion. Suuria muutoksia ei joutunut tekemään, muuta kuin muutamien auto incrementtien lisäys ja kirjoitusvirheiden korjausta sekä  
-muutamien tietokenttien lisäys. Huomasimme myös, että moni-moneen suhde “member” ja “playertype” välissä on turha. Ajattelimme aluksi, että sitä tarvitsisi siinä tilanteessa, että jäsen on Dungeon Master  
-ja pelaaja, mutta sen sijasta playertype tauluun voi laittaa suoraan neljä mahdollista tilaa (epäaktiivinen, pelaaja, dungeon master ja kumpikin). Kummastakin iteraatiosta on kuva alhaalla:  
- 
-Iteraatio 1 (fig 1)  
+**Iteration 1 (fig 1)**  
 ![Figure 1](./pics/fig1.png)  
- 
-Iteraatio 2 (fig 2)  
+
+**Iteration 2 (fig 2)**  
 ![Figure 2](./pics/fig2.png)  
- 
-Tietokannassa on kaikki toiminnot, jotka listattiin vaatimusmäärittelyssä ja vähän lisääkin. 
-Member- tauluun kirjataan kaikki kerhossa olevat jäsenet. Heidän “tila” saadaan playertype –taulusta. Yhdellä jäsenellä voi olla useampi pelihahmo (character), mutta ei ole pakko olla (ja hahmolla on pakko olla jäsen).  
-Pelihahmo saa rodun race –taulusta. Dungeons and Dragons:ssa on mahdollista pelata useampaa classia yhdellä pelihahmolla, joten hahmon ja class taulun väliin tulee moni-moneen yhteys (yksi classi voi olla useammalla hahmolla).  
-Välitauluun myös kirjataan yksittäisen classin taso (pelihahmon kokonaistaso voi olla esim. 6, jolloin hänellä voisi olla esimerkiksi 3 tasoa bard- ja wizard classissa).  
-Class ja race taulun erottaminen helposti mahdollistaa sen, että halutessaan kerho voi lisätä sinne omia kotitekoisia virityksiä. Class:n ja race:n ID on yksinkertaisesti tekstipätkä. Esimerkiksi druid –class:n ID on Druid. 
-Character taulussa on kaikki oleellisimmat tiedot hahmosta. Se ei toimi “oikean” character sheetin korvikkeena (jonne listattaisiin lisäksi esimerkiksi kestävyys, nopeus ja persoonallisuuteen liittyviä asioita).  
-Nämä kirjataan pelaajan tottumuksien tai kerhon sääntöjen mukaan erillisesti digitaalisesti tai paperille, jolloin ne muutenkin pysyy tallessa.  
-Campaign tauluun kirjataan kaikkien kamppanjoiden oleellisimmat tiedot. Nimi (esimerkiksi virallinen Wizards of the Coast:n moduuli “Curse of Strahd”), kuka on kamppanjan Dungeon Master,  
-tila (aktiivinen, lopetettu, keskeytetty (saadaan state taulusta)), ja aloitus- sekä lopetuspäivät. Participant taulussa on listattu ne hahmot, jotka kuuluvat kamppanjaan.  
-Taulussa on vain ID:tä, mutta sen avulla SQL loitsujen kautta saa näkymään jokaisen kamppanjan jokaisen hahmon seuraavasti:  
+
+The database includes all the features listed in the requirements specification and more.  
+The member table records all club members. Their “status” is retrieved from the playertype table.  
+A member can have multiple characters, or none, but a character must belong to a member.  
+Characters derive their race from the race table. In Dungeons and Dragons, a character can have multiple classes, so a many-to-many relationship exists between the character and class tables.  
+The intermediate table also records the level of each class (e.g., a character with a total level of 6 could have 3 levels in bard and 3 levels in wizard).  
+Separating the class and race tables makes it easy for the club to add custom homebrew options. Class and race IDs are simple text strings, e.g., the druid class ID is “Druid.”  
+
+The character table contains all essential character details but does not replace a proper character sheet (which includes traits like durability, speed, and personality).  
+These details are recorded separately according to player preferences or club rules, either digitally or on paper.  
+
+The campaign table records all key campaign information, including the name (e.g., the official Wizards of the Coast module “Curse of Strahd”), the Dungeon Master,  
+status (active, completed, interrupted — derived from the state table), and start and end dates.  
+The participant table lists the characters involved in a campaign. The table only contains IDs, but SQL spells can retrieve each campaign's characters, as shown below:  
+
+**(fig 3)**  
+![Figure 3](./pics/fig3.png)  
+
+Here is the code to create the view:  
+```
+SELECT campaignName, startDate, endDate, CONCAT(mdm.firstname, " ", mdm.lastname)  
+AS dungeonMaster, "__", CONCAT(m.firstname, " ", m.lastname)  
+AS playerName, characterName, characterLevel, classID AS "class", classLevel, subclass, raceID  
+FROM `member` mdm 
+INNER JOIN campaign c 
+  ON mdm.memberID = c.dungeonMasterID 
+INNER JOIN participant p 
+  ON p.campaignID = c.campaignID 
+INNER JOIN `character` ch 
+  ON p.characterID = ch.characterID  
+INNER JOIN character_has_class chc 
+  ON ch.characterID = chc.characterID 
+INNER JOIN `member` m 
+  WHERE m.memberID = ch.memberID 
+ORDER BY c.campaignID, ch.characterName, chc.classID;
+```
 
 (fig 3)  
 ![Figure 3](./pics/fig3.png)  
   
-Tässä koodi näkymän luontiin:  
+Here is the code to create the view:
 ```
 SELECT campaignName, startDate, endDate, CONCAT(mdm.firstname, " ", mdm.lastname)  
 AS dungeonMaster, "__", CONCAT(m.firstname, " ", m.lastname)  
@@ -108,7 +128,7 @@ INNER JOIN `member` m
   WHERE m.memberID = ch.memberID 
 ORDER BY c.campaignID, ch.characterName, chc.classID; 
 ```
-Tehtiin vielä näkymä, josta saa helposti selville jokaisen jäsenen jokaisen hahmon erikseen. Näkymä alla:  
+We also created a view to easily display each member's characters. The view is shown below:  
  
 (fig 4)  
 ![Figure 4](./pics/fig4.png)  
@@ -126,14 +146,14 @@ INNER JOIN `member` m ON c.memberID = m.memberID
 
 GROUP BY player, characterName, class; 
 ````
-Sessiotauluun (session) kirjataan päiväys, jolloin on pidetty pelikerta. Session_has_participant taulussa on participantID (participant taulusta) ja sessionID,  
-sekä luonnollisesti taulun oma ID. Session ja session_has_participant taulujen tarkoituksena on toimia tapana kirjata milloin sessio on pidetty, ketkä siihen osallistui,  
-mitä kamppanjaa pelattiin ja millä hahmoilla (saadaan participant taulusta). Tehtiin tuosta seuraava näkymä:  
+The session table logs the date of each game session. The session_has_participant table contains the participantID (from the participant table) and sessionID, along with the table's own ID.  
+The purpose of the session and session_has_participant tables is to log when a session occurred, who attended, which campaign was played, and which characters were used (retrieved from the participant table).  
+We created the following view for this:  
  
 (fig 5)  
 ![Figure 5](./pics/fig5.png)  
 
-Tässä koodi näkymän luontiin:  
+Here is the code to create the view:  
 ```
 CREATE VIEW sessions AS 
 SELECT s.sessionID, `date`, campaignName, concat(dm.firstname, " ", dm.lastname) AS DM, concat(m.firstname, " ", m.lastname) AS player, characterName 
@@ -146,12 +166,12 @@ INNER JOIN campaign cmp ON p.campaignID = cmp.campaignID
 INNER JOIN `member` dm ON cmp.dungeonMasterID = dm.memberID 
 GROUP BY `date`, characterName 
 ```
-Ja viimeiseksi tehtiin näkymä, josta näkyy kaikki kerhon jäsenet ja heidän “tila”.  
+Lastly, we created a view to display all club members and their statuses.   
  
 (fig 6)  
 ![Figure 6](./pics/fig6.png)  
  
-Tässä koodi näkymän luontiin:  
+Here is the code to create the view:  
 ```
 CREATE VIEW members AS 
 SELECT concat(firstname, " ", lastname) AS `member`, phoneNumber, eMail, birthday, playerTypeDesc AS `status`  
@@ -159,26 +179,25 @@ SELECT concat(firstname, " ", lastname) AS `member`, phoneNumber, eMail, birthda
 INNER JOIN playertype pt ON m.playerTypeID = pt.playerTypeID 
 GROUP BY firstname; 
 ```
- 
-
-Kaikkien muiden taulujen ID on auto incrementillä, paitsi state, class ja race taulujen. State tauluun ei tule uutta tietoa eikä sitä päivitetä, joten se on käytännössä  
-ihan sama onko auto increment vai ei. Race ja class taulujen ID:t ovat tekstiä, joten niissä ei edes voi olla auto incrementtiä. Muissa tauluissa halutaan aina säilyttää  
-sinne jo kirjattu tieto tai muuttaa sitä, joten auto increment tekee tiedon kirjaamisesta yksinkertaisempaa ja mahdollistaa viiteavaimien toimivuuden ja sitä kautta myös  
-näkymien toimivuuden. Unique constraint laitettiin member taulun sähköpostiin ja puh.numeroon sekä race ja class taulujen ID:hen, nämä tiedot kirjataan vain kerran.  
-Samaa kamppanjaa, esimerkiksi Wizards of the Coast:n virallisia moduuleja pelataan mahdollisesti useamman kerran eri porukalla, joten kamppanjan nimi ei voi olla uniikki.  
-Lisäksi samana päivänä voi olla useampi sessio, ja koska tarkkaa kellonaikaa ei kirjata, session päivämäärä ei myöskään voi olla uniikki.  
-
-Lisää indeksointeja ei tarvitse tehdä, koska meillä on ollut päällä automaattinen indeksointi pääavaimille sekä uniikeille avaimille.  
-MySQL 8.0 päivitää nämä indeksit automattisesti, ainakin sen dokumentoinnin mukaan. Eli teoreettisesti jos kerho kasvaisikin suureksi, memberID, sessionID, ja characterID sekä  
-muut pääavaimet indeksoituisi ja päivittyisi automaattisesti. Tämä nopeuttaa tietokannan toimintaa suuresti, eikä sen manuaalisesta päivittämisestä tarvitse huolehtia.  
-Lisäksi laitoimme puhelinnumeron ja s.postin uniikeiksi, joten nekin indeksoituu samalla tavalla automaattisesti.  
-
- 
-
-## Character_before_delete herätin 
-
-Tietokannassa hahmo esiintyy kolmessa muussa taulussa alkuperäisen lisäksi, joten loimme triggerin, joka mahdollistaa koko hahmon pyyhkimisen kannasta yhdellä komennolla.  
-Alla triggerin luontikoodi ja demonstraatio  
+All other table IDs use auto increment except for the state, class, and race tables. The state table does not receive new data or updates,  
+so it doesn’t matter whether auto increment is enabled. The IDs for the race and class tables are text, so auto increment cannot be used.  
+  
+For other tables, auto increment simplifies data entry and ensures the functionality of foreign keys, which in turn supports view functionality.  
+A unique constraint was applied to the email and phone number fields in the member table and to the IDs in the race and class tables, as these values should be entered only once.  
+  
+The same campaign (e.g., an official Wizards of the Coast module) might be played multiple times with different groups,  
+so the campaign name cannot be unique. Similarly, multiple sessions can occur on the same date,  
+and since exact times are not recorded, the session date cannot be unique either.  
+  
+Additional indexing is unnecessary because automatic indexing for primary keys and unique keys was enabled.  
+According to MySQL 8.0 documentation, these indexes are automatically updated. If the club were to grow significantly,  
+memberID, sessionID, characterID, and other primary keys would automatically index and update, speeding up database operations.  
+This avoids the need for manual updates. Additionally, phone numbers and emails are indexed automatically because they are unique.   
+  
+## Character_before_delete Trigger
+  
+A character is referenced in three other tables besides the original, so we created a trigger to allow for deleting an entire character from the database with a single command.  
+Here is the code to create the trigger and a demonstration:  
 ```
 DELIMITER $$ 
 
