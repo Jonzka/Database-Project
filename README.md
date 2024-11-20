@@ -30,8 +30,7 @@ On the downside, the source code is not commented. However, it was created using
 **Joni**  
 Role: In addition to refining the database structure, I devised the solution for allowing characters to have multiple classes.
 I populated the playertype, participant, character, character_has_class, race, class, and state tables.
-I wrote the campaignInfo spell (fig 3) for the view. I wrote the documentation for the requirements specification,
-explained the principles of database operation, justified design decisions, and described the views.
+I wrote the campaignInfo view's code (fig 3). For the documentation I explained the principles of database operation, justified design decisions, and described the views.
 
 **Joonas**  
 Role: I designed the core campaign-participant-character-member-campaign loop that enables displaying both the Dungeon Master
@@ -80,7 +79,7 @@ These details are recorded separately according to player preferences or club ru
 
 The campaign table records all key campaign information, including the name (e.g., the official Wizards of the Coast module “Curse of Strahd”), the Dungeon Master,
 status (active, completed, interrupted — derived from the state table), and start and end dates.
-The participant table lists the characters involved in a campaign. The table only contains IDs, but SQL spells can retrieve each campaign's characters, as shown below:
+The participant table lists the characters involved in a campaign. The table only contains IDs, but SQL can retrieve each campaign's characters, as shown below:
 
 **(fig 3)**  
 ![Figure 3](./pics/fig3.png)  
