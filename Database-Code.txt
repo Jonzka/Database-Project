@@ -1,0 +1,750 @@
+-- MySQL Workbench Forward Engineering
+ 
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+ 
+-- -----------------------------------------------------
+-- Schema AE6377
+-- -----------------------------------------------------
+ 
+-- -----------------------------------------------------
+-- Schema AE6377
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `AE6377` DEFAULT CHARACTER SET utf8 ;
+USE `AE6377` ;
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`playertype`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`playertype` (
+  `playerTypeID` INT NOT NULL AUTO_INCREMENT,
+  `playerTypeDesc` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`playerTypeID`))
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`member`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`member` (
+  `memberID` INT NOT NULL AUTO_INCREMENT,
+  `lastname` VARCHAR(64) NOT NULL,
+  `firstname` VARCHAR(64) NOT NULL,
+  `playerTypeID` INT NOT NULL,
+  `birthday` DATE NULL,
+  `phoneNumber` VARCHAR(45) NULL,
+  `eMail` VARCHAR(45) NULL,
+  PRIMARY KEY (`memberID`),
+  INDEX `fk_member_playertype1_idx` (`playerTypeID` ASC) VISIBLE,
+  UNIQUE INDEX `phoneNumber_UNIQUE` (`phoneNumber` ASC) VISIBLE,
+  UNIQUE INDEX `eMail_UNIQUE` (`eMail` ASC) VISIBLE,
+  CONSTRAINT `fk_member_playertype1`
+    FOREIGN KEY (`playerTypeID`)
+    REFERENCES `AE6377`.`playertype` (`playerTypeID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`race`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`race` (
+  `raceID` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`raceID`),
+  UNIQUE INDEX `raceID_UNIQUE` (`raceID` ASC) VISIBLE)
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`class`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`class` (
+  `classID` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`classID`),
+  UNIQUE INDEX `raceID_UNIQUE` (`classID` ASC) VISIBLE)
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`character`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`character` (
+  `characterID` INT NULL AUTO_INCREMENT,
+  `characterName` VARCHAR(64) NOT NULL,
+  `characterLevel` TINYINT NOT NULL,
+  `subclass` VARCHAR(256) NULL,
+  `raceID` VARCHAR(64) NOT NULL,
+  `memberID` INT NOT NULL,
+  `characterNotes` MEDIUMTEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`characterID`),
+  INDEX `fk_character_race1_idx` (`raceID` ASC) VISIBLE,
+  INDEX `fk_character_member1_idx` (`memberID` ASC) VISIBLE,
+  CONSTRAINT `fk_character_race1`
+    FOREIGN KEY (`raceID`)
+    REFERENCES `AE6377`.`race` (`raceID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_character_member1`
+    FOREIGN KEY (`memberID`)
+    REFERENCES `AE6377`.`member` (`memberID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`state`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`state` (
+  `stateID` INT NOT NULL,
+  `stateDesc` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`stateID`))
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`campaign`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`campaign` (
+  `campaignID` INT NOT NULL AUTO_INCREMENT,
+  `campaignName` VARCHAR(256) NOT NULL,
+  `dungeonMasterID` INT NOT NULL,
+  `stateID` INT NOT NULL,
+  `startDate` DATE NOT NULL,
+  `endDate` DATE NULL,
+  PRIMARY KEY (`campaignID`),
+  INDEX `fk_campaign_state1_idx` (`stateID` ASC) VISIBLE,
+  INDEX `fk_campaign_member1_idx` (`dungeonMasterID` ASC) VISIBLE,
+  CONSTRAINT `fk_campaign_state1`
+    FOREIGN KEY (`stateID`)
+    REFERENCES `AE6377`.`state` (`stateID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_campaign_member1`
+    FOREIGN KEY (`dungeonMasterID`)
+    REFERENCES `AE6377`.`member` (`memberID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`participant`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`participant` (
+  `participantID` INT NOT NULL AUTO_INCREMENT,
+  `characterID` INT NOT NULL,
+  `campaignID` INT NULL,
+  PRIMARY KEY (`participantID`),
+  INDEX `fk_character_has_campaign_campaign1_idx` (`campaignID` ASC) VISIBLE,
+  INDEX `fk_character_has_campaign_character1_idx` (`characterID` ASC) VISIBLE,
+  CONSTRAINT `fk_character_has_campaign_character1`
+    FOREIGN KEY (`characterID`)
+    REFERENCES `AE6377`.`character` (`characterID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_character_has_campaign_campaign1`
+    FOREIGN KEY (`campaignID`)
+    REFERENCES `AE6377`.`campaign` (`campaignID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`session`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`session` (
+  `sessionID` INT NOT NULL AUTO_INCREMENT,
+  `date` DATE NOT NULL,
+  PRIMARY KEY (`sessionID`))
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`session_has_participant`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`session_has_participant` (
+  `partakeID` INT NOT NULL AUTO_INCREMENT,
+  `sessionID` INT NOT NULL,
+  `participantID` INT NOT NULL,
+  PRIMARY KEY (`partakeID`),
+  INDEX `fk_session_has_participant_participant1_idx` (`participantID` ASC) VISIBLE,
+  INDEX `fk_session_has_participant_session1_idx` (`sessionID` ASC) VISIBLE,
+  CONSTRAINT `fk_session_has_participant_session1`
+    FOREIGN KEY (`sessionID`)
+    REFERENCES `AE6377`.`session` (`sessionID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_session_has_participant_participant1`
+    FOREIGN KEY (`participantID`)
+    REFERENCES `AE6377`.`participant` (`participantID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `AE6377`.`character_has_class`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `AE6377`.`character_has_class` (
+  `characterClassID` INT NOT NULL AUTO_INCREMENT,
+  `characterID` INT NOT NULL,
+  `classID` VARCHAR(64) NOT NULL,
+  `classLevel` TINYINT NOT NULL,
+  INDEX `fk_character_has_class_class1_idx` (`classID` ASC) VISIBLE,
+  INDEX `fk_character_has_class_character1_idx` (`characterID` ASC) VISIBLE,
+  PRIMARY KEY (`characterClassID`),
+  CONSTRAINT `fk_character_has_class_character1`
+    FOREIGN KEY (`characterID`)
+    REFERENCES `AE6377`.`character` (`characterID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_character_has_class_class1`
+    FOREIGN KEY (`classID`)
+    REFERENCES `AE6377`.`class` (`classID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+ 
+ 
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+ 
+
+
+INSERT INTO race VALUES
+("Dragonborn"),
+("Dwarf"),
+("Elf"),
+("Gnome"),
+("Half-Elf"),
+("Halfling"),
+("Half-Orc"),
+("Human"),
+("Tiefling");
+ 
+INSERT INTO class VALUES
+("Barbarian"),
+("Bard"),
+("Cleric"),
+("Druid"),
+("Fighter"),
+("Monk"),
+("Paladin"),
+("Ranger"),
+("Rogue"),
+("Sorcerer"),
+("Warlock"),
+("Wizard");
+ 
+INSERT INTO state (stateID, stateDesc) VALUES
+(0, "Finished"),
+(1, "Active"),
+(2, "Paused");
+
+INSERT INTO playertype (playerTypeDesc)  
+VALUES ("Dungeon master"),  
+("Player"), 
+("DM and player"),  
+("Inactive");
+
+INSERT INTO member (lastname, firstname, playerTypeID, birthday, phoneNumber, eMail)  
+VALUES ("Ankka", "Aku", 2,"1934-06-09", "050 3131313", "aku.ankka@dmail.com"),  
+("Hiiri", "Mikki", 2, "1928-11-18", "045 6366535", "isohiiri@dmail.com"),  
+("Hopo", "Hessu", 2, "1939-03-17", "080 8080001", "hessunmeili@dmail.com"),  
+("Ankka", "Taavi", 2, "1961-10-22", "676 676767", "taavitietaa@dmail.com"),  
+("Escobar", "Pablo", 1, "1949-12-01", "404 7890404", "pablo.escobar@dmail.com"),  
+("Hanhi", "Hannu", 2, "1948-01-06", "124 681012", "tuurihanhi@dmail.com"),  
+("Pennonen", "Kroisos", 2, "1956-07-16", "999 9999998", "kp.business@dmail.com"),  
+("Ankka", "Roope", 2, "1947-10-22", "999 9999999", "ra.business@dmail.com"),  
+("Valkoinen", "Valtteri", 1, "1958-09-07", "340 7879292", "oldchef@dmail.com"), 
+("Peloton", "Pelle", 3, "1956-03-15", "200 2002002", "pellepeloton@dmail.com"), 
+("Purkittaja", "Harri", 4, "1980-07-31", "721 8934646", "thechosentwo@dmail.com"), 
+("Reppuli", "Frodo", 4, "2968-09-22", "010 8906767", "thechosenone@dmail.com"), 
+("Jaakonpoika", "Persival", 4, "1995-06-09", "565 6322882", "perseusjackson@dmail.com");
+
+INSERT INTO `character` (characterName, characterLevel, subclass, raceID, memberID, characterNotes) VALUES
+("Stockmann", 3, "Mastermind", "Elf", 1, "Funny guy, good at reading people"),
+("Sotka", 3, "Abjuration", "Human", 2, "Likes to use fireball"),
+("Hennez Mauriz", 3, "Light", "Human", 3, "Praises the sun"),
+("Seppälä", 3, "Rune Knight", "Dwarf", 4, ""),
+("Bartholomew III", 5, "Creation, Moon", "Tiefling", 6, "2 levels in druid, 3 in bard"),
+("Ludwig van Beethoven", 6, "Celestial, Spores, Trickster", "Half-Orc", 7, "1 level in warlock, 2 levels in druid, 3 levels in cleric"),
+("Iso Apulainen", 6, "Wild Magic", "Dwarf", 10, ""),
+("Ragnheidr", 6, "Berserker", "Half-Elf", 8, "Likes plundering"),
+("Cedric Ironshield", 3, "Oathbreaker", "Halfling", 8, "");
+
+INSERT INTO character_has_class (characterID, classID, classLevel) VALUES
+(1, "Rogue", 3),
+(2, "Wizard", 3),
+(3, "Cleric", 3),
+(4, "Fighter", 3),
+(5, "Druid", 2),
+(5, "Bard", 3),
+(6, "Warlock", 1),
+(6, "Druid", 2),
+(6, "Cleric", 3),
+(7, "Sorcerer", 6),
+(8, "Barbarian", 6),
+(9, "Paladin", 3);
+
+
+INSERT INTO campaign (campaignName, dungeonMasterID, stateID, startDate, endDate)
+VALUES ("Hennez Mauriz and the consequences of fifty one crit fails", 9, 1, "2018-12-12", null),
+("That time we got reincarnated as DnD classes", 5, 1, "2019-09-15", null),
+("One night in Kouvola challenge (IMPOSSIBLE)", 10, 2, "2021-03-20", null),
+("pls come play??", 5, 0, "2023-04-04", "2023-04-05");
+
+INSERT INTO participant (characterID, campaignID) VALUES
+(1,1),
+(2,1),
+(3,1),
+(4,1),
+(9,1),
+(5,2),
+(6,2),
+(7,2),
+(8,2),
+(3,3),
+(6,3),
+(8,3),
+(7,3),
+(3, 4);
+ 
+INSERT INTO `session` (`date`) 
+VALUES ("2018-12-12"),
+("2019-01-12"),
+("2019-02-12"),
+("2019-03-12"),
+("2019-04-12"),
+("2019-06-12"),
+("2019-07-12"),
+("2019-08-12"),
+("2019-09-12"),
+("2019-09-15"),
+("2019-10-12"),
+("2019-10-15"),
+("2019-11-12"),
+("2019-11-15"),
+("2019-12-12"),
+("2019-12-15"),
+("2020-01-12"),
+("2020-01-15"),
+("2020-02-12"),
+("2020-02-15"),
+("2020-05-12"),
+("2020-07-15"),
+("2020-08-12"),
+("2020-08-15"),
+("2020-10-12"),
+("2020-11-15"),
+("2020-12-12"),
+("2020-12-15"),
+("2021-01-12"),
+("2021-01-15"),
+("2021-02-12"),
+("2021-02-15"),
+("2021-03-12"),
+("2021-03-15"),
+("2021-03-20"),
+("2021-04-12"),
+("2021-04-15"),
+("2021-04-20"),
+("2021-05-12"),
+("2021-05-15"),
+("2021-05-20"),
+("2021-06-12"),
+("2021-08-15"),
+("2021-10-12"),
+("2021-10-15"),
+("2021-12-12"),
+("2021-12-15"),
+("2023-01-12"),
+("2023-01-15"),
+("2023-02-12"),
+("2023-02-15"),
+("2023-03-12"),
+("2023-03-15"),
+("2023-04-04"),
+("2023-04-12"),
+("2023-04-15"),
+("2023-05-12"),
+("2023-05-15");
+
+	
+INSERT INTO session_has_participant (sessionID, participantID)
+VALUES (1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+ 
+(2, 1),
+(2, 2),
+(2, 3),
+(2, 4),
+(2, 5),
+ 
+(3, 1),
+(3, 2),
+(3, 3),
+(3, 4),
+(3, 5),
+ 
+(4, 1),
+(4, 2),
+(4, 3),
+(4, 4),
+(4, 5),
+ 
+(5, 1),
+(5, 2),
+(5, 3),
+(5, 4),
+(5, 5),
+ 
+(6, 1),
+(6, 2),
+(6, 3),
+(6, 4),
+(6, 5),
+ 
+(7, 1),
+(7, 2),
+(7, 3),
+(7, 4),
+(7, 5),
+ 
+(8, 1),
+(8, 2),
+(8, 3),
+(8, 4),
+(8, 5),
+ 
+(9, 1),
+(9, 2),
+(9, 3),
+(9, 4),
+(9, 5),
+ 
+(10, 6),
+(10, 7),
+(10, 8),
+(10, 9),
+ 
+(11, 1),
+(11, 2),
+(11, 3),
+(11, 4),
+(11, 5),
+ 
+(12, 6),
+(12, 7),
+(12, 8),
+(12, 9),
+ 
+(13, 1),
+(13, 2),
+(13, 3),
+(13, 4),
+(13, 5),
+ 
+(14, 6),
+(14, 7),
+(14, 8),
+(14, 9),
+ 
+(15, 1),
+(15, 2),
+(15, 3),
+(15, 4),
+(15, 5),
+ 
+(16, 6),
+(16, 7),
+(16, 8),
+(16, 9),
+ 
+(17, 1),
+(17, 2),
+(17, 3),
+(17, 4),
+(17, 5),
+ 
+(18, 6),
+(18, 7),
+(18, 8),
+(18, 9),
+ 
+(19, 1),
+(19, 2),
+(19, 3),
+(19, 4),
+(19, 5),
+ 
+(20, 6),
+(20, 7),
+(20, 8),
+(20, 9),
+ 
+(21, 1),
+(21, 2),
+(21, 3),
+(21, 4),
+(21, 5),
+ 
+(22, 6),
+(22, 7),
+(22, 8),
+(22, 9),
+ 
+(23, 1),
+(23, 2),
+(23, 3),
+(23, 4),
+(23, 5),
+ 
+(24, 6),
+(24, 7),
+(24, 8),
+(24, 9),
+ 
+(25, 1),
+(25, 2),
+(25, 3),
+(25, 4),
+(25, 5),
+ 
+(26, 6),
+(26, 7),
+(26, 8),
+(26, 9),
+ 
+(27, 1),
+(27, 2),
+(27, 3),
+(27, 4),
+(27, 5),
+ 
+(28, 6),
+(28, 7),
+(28, 8),
+(28, 9),
+ 
+(29, 1),
+(29, 2),
+(29, 3),
+(29, 4),
+(29, 5),
+ 
+(30, 6),
+(30, 7),
+(30, 8),
+(30, 9),
+ 
+(31, 1),
+(31, 2),
+(31, 3),
+(31, 4),
+(31, 5),
+ 
+(32, 6),
+(32, 7),
+(32, 8),
+(32, 9),
+ 
+(33, 1),
+(33, 2),
+(33, 3),
+(33, 4),
+(33, 5),
+ 
+(34, 6),
+(34, 7),
+(34, 8),
+(34, 9),
+ 
+(35, 10),
+(35, 11),
+(35, 12),
+(35, 13),
+ 
+(36, 1),
+(36, 2),
+(36, 3),
+(36, 4),
+(36, 5),
+ 
+(37, 6),
+(37, 7),
+(37, 8),
+(37, 9),
+ 
+(38, 10),
+(38, 11),
+(38, 12),
+(38, 13),
+ 
+(39, 1),
+(39, 2),
+(39, 3),
+(39, 4),
+(39, 5),
+ 
+(40, 6),
+(40, 7),
+(40, 8),
+(40, 9),
+ 
+(41, 10),
+(41, 11),
+(41, 12),
+(41, 13),
+ 
+(42, 1),
+(42, 2),
+(42, 3),
+(42, 4),
+(42, 5),
+ 
+(43, 6),
+(43, 7),
+(43, 8),
+(43, 9),
+ 
+(44, 1),
+(44, 2),
+(44, 3),
+(44, 4),
+(44, 5),
+ 
+(45, 6),
+(45, 7),
+(45, 8),
+(45, 9),
+ 
+(46, 1),
+(46, 2),
+(46, 3),
+(46, 4),
+(46, 5),
+ 
+(47, 6),
+(47, 7),
+(47, 8),
+(47, 9),
+ 
+(48, 1),
+(48, 2),
+(48, 3),
+(48, 4),
+(48, 5),
+ 
+(49, 6),
+(49, 7),
+(49, 8),
+(49, 9),
+ 
+(50, 1),
+(50, 2),
+(50, 3),
+(50, 4),
+(50, 5),
+ 
+(51, 6),
+(51, 7),
+(51, 8),
+(51, 9),
+ 
+(52, 1),
+(52, 2),
+(52, 3),
+(52, 4),
+(52, 5),
+ 
+(53, 6),
+(53, 7),
+(53, 8),
+(53, 9),
+ 
+(54, 14),
+ 
+(55, 1),
+(55, 2),
+(55, 3),
+(55, 4),
+(55, 5),
+ 
+(56, 6),
+(56, 7),
+(56, 8),
+(56, 9),
+ 
+(57, 1),
+(57, 2),
+(57, 3),
+(57, 4),
+(57, 5),
+ 
+(58, 6),
+(58, 7),
+(58, 8),
+(58, 9);
+
+CREATE VIEW campaignInfo AS
+SELECT campaignName, startDate, endDate, CONCAT(mdm.firstname, " ", mdm.lastname) AS dungeonMaster, "__",
+CONCAT(m.firstname, " ", m.lastname) AS playerName, characterName, characterLevel, classID AS "class", classLevel, subclass, raceID
+ 
+FROM `member` mdm
+INNER JOIN campaign c
+ON mdm.memberID = c.dungeonMasterID
+INNER JOIN participant p
+ON p.campaignID = c.campaignID
+INNER JOIN `character` ch
+ON p.characterID = ch.characterID 
+INNER JOIN character_has_class chc
+ON ch.characterID = chc.characterID
+INNER JOIN `member` m
+WHERE m.memberID = ch.memberID
+ORDER BY c.campaignID, ch.characterName, chc.classID;
+
+CREATE VIEW allCharacters AS
+SELECT concat(firstname, " ", lastname) AS player, characterName, characterLevel, classID AS class, classLevel, subclass, raceID  AS race, characterNotes
+FROM `character` c
+INNER JOIN character_has_class cc ON c.characterID = cc.characterID
+INNER JOIN `member` m ON c.memberID = m.memberID
+GROUP BY player, characterName, class;
+
+CREATE VIEW sessions AS
+SELECT s.sessionID, `date`, campaignName, concat(dm.firstname, " ", dm.lastname) AS DM, concat(m.firstname, " ", m.lastname) AS player, characterName
+FROM `session` s
+INNER JOIN session_has_participant sp ON s.sessionID = sp.sessionID
+INNER JOIN participant p ON sp.participantID = p.participantID
+INNER JOIN `character` c ON p.characterID = c.characterID
+INNER JOIN `member` m ON c.memberID = m.memberID
+INNER JOIN campaign cmp ON p.campaignID = cmp.campaignID
+INNER JOIN `member` dm ON cmp.dungeonMasterID = dm.memberID
+GROUP BY `date`, characterName;
+
+CREATE VIEW members AS
+SELECT concat(firstname, " ", lastname) AS `member`, phoneNumber, eMail, birthday, playerTypeDesc AS `status` 
+FROM `member` m 
+INNER JOIN playertype pt ON m.playerTypeID = pt.playerTypeID
+GROUP BY firstname;
+
+DELIMITER $$
+CREATE TRIGGER `character_before_delete`
+BEFORE DELETE ON `character`
+FOR EACH ROW
+BEGIN
+    DELETE FROM character_has_class WHERE characterID = OLD.characterID;
+    DELETE FROM session_has_participant WHERE participantID IN (
+        SELECT participantID FROM participant
+        WHERE characterID = OLD.characterID);
+    DELETE FROM participant WHERE characterID = OLD.characterID;
+END $$
+DELIMITER ;
