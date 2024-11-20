@@ -4,8 +4,7 @@ A MySQL database project done for a school course.
 # Luolat ja lohikäärmeet -kerholle tietokanta 
 
 Työryhmän nimi: Luolainsinöörit 
-Jäsenet: Joni Oranne AC9766, Joonas Peltomäki AE6377 
-Opintojaksotunnus: TTC2020-3037, Tietokannat 
+Jäsenet: Joni Oranne, Joonas Peltomäki
 Versionumero: 1.0 
 Päiväys: 27.03.2024 
 
@@ -69,10 +68,10 @@ muutamien tietokenttien lisäys. Huomasimme myös, että moni-moneen suhde “me
 ja pelaaja, mutta sen sijasta playertype tauluun voi laittaa suoraan neljä mahdollista tilaa (epäaktiivinen, pelaaja, dungeon master ja kumpikin). Kummastakin iteraatiosta on kuva alhaalla:  
  
 Iteraatio 1 (fig 1) 
-![Figure 1](pics/fig1)
+![Figure 1](./pics/fig1.png)
 
 Iteraatio 2 (fig 2)  
-![Figure 2](./pics/fig1)
+![Figure 2](./pics/fig2.png)
 
 Tietokannassa on kaikki toiminnot, jotka listattiin vaatimusmäärittelyssä ja vähän lisääkin. 
 Member- tauluun kirjataan kaikki kerhossa olevat jäsenet. Heidän “tila” saadaan playertype –taulusta. Yhdellä jäsenellä voi olla useampi pelihahmo (character), mutta ei ole pakko olla (ja hahmolla on pakko olla jäsen).  
@@ -86,7 +85,7 @@ tila (aktiivinen, lopetettu, keskeytetty (saadaan state taulusta)), ja aloitus- 
 Taulussa on vain ID:tä, mutta sen avulla SQL loitsujen kautta saa näkymään jokaisen kamppanjan jokaisen hahmon seuraavasti:  
 
 (fig 3)
-![Figure 3](./pics/fig3)
+![Figure 3](./pics/fig3.png)
   
 Tässä koodi näkymän luontiin:  
 ```
@@ -111,7 +110,7 @@ ORDER BY c.campaignID, ch.characterName, chc.classID;
 ```
 Tehtiin vielä näkymä, josta saa helposti selville jokaisen jäsenen jokaisen hahmon erikseen. Näkymä alla:
 (fig 4) 
-![Figure 4](./pics/fig4)
+![Figure 4](./pics/fig4.png)
 
 Tässä koodi näkymän luontiin: 
 ```
@@ -132,7 +131,7 @@ sekä luonnollisesti taulun oma ID. Session ja session_has_participant taulujen 
 mitä kamppanjaa pelattiin ja millä hahmoilla (saadaan participant taulusta). Tehtiin tuosta seuraava näkymä:  
 
 (fig 5)
-![Figure 5](./pics/fig5)
+![Figure 5](./pics/fig5.png)
 
 Tässä koodi näkymän luontiin:  
 ```
@@ -150,7 +149,7 @@ GROUP BY `date`, characterName
 Ja viimeiseksi tehtiin näkymä, josta näkyy kaikki kerhon jäsenet ja heidän “tila”.  
 
 (fig 6) 
-![Figure 6](./pics/fig6)
+![Figure 6](./pics/fig6.png)
 
 Tässä koodi näkymän luontiin:  
 ```
@@ -206,13 +205,13 @@ END $$
 DELIMITER ; 
 ```
 Herättimen demonstraatio (fig 8) 
-![Figure 7a](./pics/fig7a)
-![Figure 7b](./pics/fig7b)
-![Figure 7c](./pics/fig7c)
-![Figure 7d](./pics/fig7d)
-![Figure 7e](./pics/fig7e)
-![Figure 7f](./pics/fig7f)
-![Figure 7g](./pics/fig7g)
-![Figure 7h](./pics/fig7h)
-![Figure 7i](./pics/fig7i)
+![Figure 7a](./pics/fig7a.png)
+![Figure 7b](./pics/fig7b.png)
+![Figure 7c](./pics/fig7c.png)
+![Figure 7d](./pics/fig7d.png)
+![Figure 7e](./pics/fig7e.png)
+![Figure 7f](./pics/fig7f.png)
+![Figure 7g](./pics/fig7g.png)
+![Figure 7h](./pics/fig7h.png)
+![Figure 7i](./pics/fig7i.png)
 Hahmo on onnistuneesti pyyhitty kannasta. 
