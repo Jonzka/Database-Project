@@ -69,7 +69,7 @@ muutamien tietokenttien lisäys. Huomasimme myös, että moni-moneen suhde “me
 ja pelaaja, mutta sen sijasta playertype tauluun voi laittaa suoraan neljä mahdollista tilaa (epäaktiivinen, pelaaja, dungeon master ja kumpikin). Kummastakin iteraatiosta on kuva alhaalla:  
  
 Iteraatio 1 (fig 1) 
-![Figure 1](./pics/fig1)
+![Figure 1](pics/fig1)
 
 Iteraatio 2 (fig 2)  
 ![Figure 2](./pics/fig1)
