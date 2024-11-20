@@ -69,7 +69,7 @@ ja pelaaja, mutta sen sijasta playertype tauluun voi laittaa suoraan neljä mahd
  
 Iteraatio 1 (fig 1) 
 ![Figure 1](./pics/fig1.png)
-
+ 
 Iteraatio 2 (fig 2)  
 ![Figure 2](./pics/fig2.png)
 
@@ -108,10 +108,10 @@ INNER JOIN `member` m
   WHERE m.memberID = ch.memberID 
 ORDER BY c.campaignID, ch.characterName, chc.classID; 
 ```
-Tehtiin vielä näkymä, josta saa helposti selville jokaisen jäsenen jokaisen hahmon erikseen. Näkymä alla:
+Tehtiin vielä näkymä, josta saa helposti selville jokaisen jäsenen jokaisen hahmon erikseen. Näkymä alla:  
+ 
 (fig 4) 
-![Figure 4](./pics/fig4.png)
-
+![Figure 4](./pics/fig4.png) 
 Tässä koodi näkymän luontiin: 
 ```
 CREATE VIEW allCharacters AS 
@@ -129,9 +129,9 @@ GROUP BY player, characterName, class;
 Sessiotauluun (session) kirjataan päiväys, jolloin on pidetty pelikerta. Session_has_participant taulussa on participantID (participant taulusta) ja sessionID,  
 sekä luonnollisesti taulun oma ID. Session ja session_has_participant taulujen tarkoituksena on toimia tapana kirjata milloin sessio on pidetty, ketkä siihen osallistui,  
 mitä kamppanjaa pelattiin ja millä hahmoilla (saadaan participant taulusta). Tehtiin tuosta seuraava näkymä:  
-
-(fig 5)
-![Figure 5](./pics/fig5.png)
+ 
+(fig 5) 
+![Figure 5](./pics/fig5.png) 
 
 Tässä koodi näkymän luontiin:  
 ```
@@ -147,10 +147,10 @@ INNER JOIN `member` dm ON cmp.dungeonMasterID = dm.memberID
 GROUP BY `date`, characterName 
 ```
 Ja viimeiseksi tehtiin näkymä, josta näkyy kaikki kerhon jäsenet ja heidän “tila”.  
-
+ 
 (fig 6) 
-![Figure 6](./pics/fig6.png)
-
+![Figure 6](./pics/fig6.png) 
+ 
 Tässä koodi näkymän luontiin:  
 ```
 CREATE VIEW members AS 
